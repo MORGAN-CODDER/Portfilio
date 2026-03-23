@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Apex Wrench Solutions</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0078aa 100%);
+            padding: 20px;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .login-logo {
+            margin-bottom: 15px;
+        }
+        .login-logo img {
+            height: 80px;
+            width: auto;
+        }
+        .login-box h2 {
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+        .login-box p {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        .login-form .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: #0078aa;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #0078aa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            background: #3d7ea6;
+        }
+        .error-msg {
+            color: #dc3545;
+            margin-top: 15px;
+            display: none;
+        }
+        .login-footer {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .back-link {
+            margin-top: 15px;
+            display: inline-block;
+            color: #0078aa;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="my logo.png" alt="Apex Wrench Solutions">
+            </div>
+            <h2>Admin Portal</h2>
+            <p>Apex Wrench Solutions</p>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fa-solid fa-sign-in-alt"></i> Login
+                </button>
+                <p class="error-msg" id="error-msg">Invalid username or password</p>
+            </form>
+            <div class="login-footer">
+                Default: admin / apex2024
+            </div>
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Website</a>
+        </div>
+    </div>
+
+    <script>
+        // Set default admin credentials if not exists
+        if (!localStorage.getItem('adminCredentials')) {
+            localStorage.setItem('adminCredentials', JSON.stringify({
+                username: 'admin',
+                password: 'apex2024'
+            }));
+        }
+
+        document.getElementById('login-form').onsubmit = function(e) {
+            e.preventDefault();
+            
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var errorMsg = document.getElementById('error-msg');
+            
+            var credentials = JSON.parse(localStorage.getItem('adminCredentials'));
+            
+            if (username === credentials.username && password === credentials.password) {
+                // Login successful
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                // Login failed
+                errorMsg.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        };
+    </script>
+</body>
+</html>
