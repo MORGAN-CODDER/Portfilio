@@ -19,10 +19,7 @@ A complete website for Apex Wrench Solutions - a professional plumbing service c
 - `styles.css` - Website styles
 - `my logo.png` - Company logo
 
-## Admin Login
-- URL: login.html
-- Username: admin
-- Password: apex2024
+
 
 ## Sections
 1. Header/Navigation - With company logo
