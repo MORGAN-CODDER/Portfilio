@@ -29,38 +29,45 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Portfolio Filtering
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    // Portfolio Filtering (Dynamic)
+    function setupPortfolioTabs() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const portfolioGrid = document.getElementById('dynamic-portfolio-grid');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            this.classList.add('active');
-
-            const filter = this.getAttribute('data-tab');
-
-            portfolioItems.forEach(item => {
-                const category = item.getAttribute('data-category');
-                
-                if (filter === 'all' || filter === category) {
-                    item.style.display = 'block';
-                    setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'scale(1)';
-                    }, 10);
-                } else {
-                    item.style.opacity = '0';
-                    item.style.transform = 'scale(0.8)';
-                    setTimeout(() => {
-                        item.style.display = 'none';
-                    }, 300);
-                }
+                const filter = this.getAttribute('data-tab');
+                filterPortfolio(filter);
             });
         });
-    });
+    }
+
+    function filterPortfolio(filter) {
+        const portfolioItems = document.querySelectorAll('#dynamic-portfolio-grid .portfolio-item');
+        
+        portfolioItems.forEach(item => {
+            const category = item.getAttribute('data-category');
+            
+            if (filter === 'all' || filter === category) {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'scale(1)';
+                }, 10);
+            } else {
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+    }
 
     // Star Rating for Reviews
     const stars = document.querySelectorAll('.star-rating i');
@@ -195,6 +202,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Load dynamic portfolio
+    loadPortfolio();
+    setupPortfolioTabs();
+
     // Load saved data (demo purposes)
     loadSavedData();
 });
@@ -298,6 +309,54 @@ function loadSavedData() {
     }
 }
 
+function loadPortfolio() {
+    const portfolioData = JSON.parse(localStorage.getItem('plumberPortfolio') || '[]');
+    const portfolioGrid = document.getElementById('dynamic-portfolio-grid');
+    
+    if (portfolioData.length === 0) {
+        portfolioGrid.innerHTML = `
+            <div class="empty-state portfolio-empty">
+                <i class="fa-solid fa-images" style="font-size: 4rem; color: var(--gray); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--dark-color);">No Work Samples Yet</h3>
+                <p style="color: var(--gray);">Upload your first photo or video from the <a href="login.html" class="admin-link" style="color: var(--primary-color); font-weight: 600;">Admin Panel</a></p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Reverse to show newest first
+    const sortedPortfolio = portfolioData.slice().reverse();
+    
+    portfolioGrid.innerHTML = sortedPortfolio.map(post => {
+        let mediaHtml;
+        if (post.isEmbed && post.embedHtml) {
+            mediaHtml = post.embedHtml;
+        } else if (post.type === 'videos') {
+            const vidAlt = post.title ? \`${post.title} - Plumbing Service Video by Apex Wrench Solutions\${post.description ? ' - ' + post.description.substring(0,50) : ''}\` : 'Plumbing Service Video';
+            mediaHtml = \`<video controls poster="\${post.poster || ''}" aria-label="\${vidAlt}" preload="metadata">
+                <source src="\${post.url}" type="video/mp4">
+                Your browser does not support video playback.
+              </video>\`;
+        } else {
+        const imgAlt = post.title ? \`${post.title} - Apex Wrench Solutions Plumbing Portfolio\${post.description ? ' - ' + post.description.substring(0,50) : ''}\` : 'Apex Wrench Solutions Plumbing Work Example';
+        mediaHtml = `<img src="${post.url}" alt="\${imgAlt}" loading="lazy" width="400" height="300">`;
+        }
+        
+        return `
+            <div class="portfolio-item" data-category="${post.type}">
+                ${mediaHtml}
+                <div class="portfolio-overlay">
+                    <h4>${post.title || 'Untitled'}</h4>
+                    <p>${post.description || ''}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Trigger reveal animation
+    setTimeout(() => reveal(), 100);
+}
+
 // Animation on scroll
 function reveal() {
     const reveals = document.querySelectorAll('.service-card, .portfolio-item, .review-card');
@@ -318,3 +377,5 @@ window.addEventListener('scroll', reveal);
 
 // Initial call
 reveal();
+
+// Embed Link
