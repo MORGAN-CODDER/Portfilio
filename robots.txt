@@ -1,1 +1,11 @@
+User-agent: *
+Allow: /
+Sitemap: https:///sitemap.xml
 
+# Allow Googlebot everything
+User-agent: Googlebot
+Allow: /
+
+# Noindex admin pages (optional for static hosting)
+Disallow: /login.html
+Disallow: /admin.html
